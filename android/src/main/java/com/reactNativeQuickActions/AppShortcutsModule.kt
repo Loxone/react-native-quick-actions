@@ -6,7 +6,7 @@ import android.content.Intent
 import android.content.pm.ShortcutManager
 import android.net.Uri
 import android.os.Build
-import android.os.PersistableBundle
+import androidx.core.content.IntentCompat
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
@@ -22,7 +22,6 @@ import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.modules.core.DeviceEventManagerModule
-import com.reactNativeQuickActions.ShortcutItem.Companion.fromPersistableBundle
 import com.reactNativeQuickActions.ShortcutItem.Companion.fromReadableArray
 
 @ReactModule(name = AppShortcutsModule.REACT_NAME)
@@ -52,10 +51,9 @@ internal class AppShortcutsModule(reactContext: ReactApplicationContext) : React
             if (currentActivity != null) {
                 val intent = currentActivity.intent
                 if (ACTION_SHORTCUT == intent.action) {
-                    val bundle = intent.getParcelableExtra<PersistableBundle>(SHORTCUT_ITEM)
-                    if (bundle != null) {
-                        val item = fromPersistableBundle(bundle)
-                        map = item.toWritableMap()
+                    val shortcutItem: ShortcutItem? = IntentCompat.getParcelableExtra(intent, SHORTCUT_ITEM, ShortcutItem::class.java)
+                    if (shortcutItem != null) {
+                        map = shortcutItem.toWritableMap()
                     }
                 }
             }
@@ -95,7 +93,10 @@ internal class AppShortcutsModule(reactContext: ReactApplicationContext) : React
             Intent(Intent.ACTION_VIEW, uri)
         } else {
             Intent(context, activity.javaClass)
+                .setAction(ACTION_SHORTCUT)
         }
+
+        intent.putExtra(SHORTCUT_ITEM, item)
 
         return ShortcutInfoCompat.Builder(context, id)
             .setShortLabel(item.title)
@@ -126,11 +127,7 @@ internal class AppShortcutsModule(reactContext: ReactApplicationContext) : React
         if (ACTION_SHORTCUT != intent.action || !isShortcutSupported) {
             return
         }
-        var item: ShortcutItem? = null
-        val bundle = intent.getParcelableExtra<PersistableBundle>(SHORTCUT_ITEM)
-        if (bundle != null) {
-            item = fromPersistableBundle(bundle)
-        }
+        val item: ShortcutItem? = IntentCompat.getParcelableExtra(intent, SHORTCUT_ITEM, ShortcutItem::class.java)
         if (item != null) {
             reactApplicationContext
                 .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)

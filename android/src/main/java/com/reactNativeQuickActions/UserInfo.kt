@@ -1,18 +1,16 @@
 package com.reactNativeQuickActions
 
+import android.os.Parcelable
 import android.os.PersistableBundle
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.WritableMap
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class UserInfo(
     val url: String? = null
-) {
-    fun toPersistableBundle(): PersistableBundle {
-        val bundle = PersistableBundle()
-        bundle.putString("url", url)
-        return bundle
-    }
+) : Parcelable {
 
     fun toWritableMap(): WritableMap {
         val map = Arguments.createMap()
