@@ -56,6 +56,11 @@ android {
 
     compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     defaultConfig {
        minSdkVersion getExtOrIntegerDefault('minSdkVersion')
        targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
@@ -70,5 +75,6 @@ repositories {
 def kotlin_version = getExtOrDefault("kotlinVersion")
 
 dependencies {
+    implementation "androidx.core:core-ktx:1.10.1"
     implementation "com.facebook.react:react-android:+"
 }

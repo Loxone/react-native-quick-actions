@@ -37,7 +37,7 @@ data class ShortcutItem(
         fun fromReadableArray(items: ReadableArray): List<ShortcutItem> {
             val shortcuts = mutableListOf<ShortcutItem>()
 
-            for (index in 0..items.size()) {
+            for (index in 0 until items.size()) {
                 val map: ReadableMap = items.getMap(index)
                 val shortcut: ShortcutItem = fromReadableMap(map)
 
