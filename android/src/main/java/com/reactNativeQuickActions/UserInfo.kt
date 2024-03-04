@@ -13,9 +13,17 @@ data class UserInfo(
 ) : Parcelable {
 
     fun toWritableMap(): WritableMap {
-        val map = Arguments.createMap()
-        map.putString("url", url)
+        val map = Arguments.createMap().apply {
+            putString("url", url)
+        }
+
         return map
+    }
+
+    fun toPersistableBundle(): PersistableBundle {
+        return PersistableBundle().apply {
+            putString("url", url)
+        }
     }
 
     companion object {
@@ -30,15 +38,5 @@ data class UserInfo(
             )
         }
 
-        fun fromPersistableBundle(bundle: PersistableBundle?): UserInfo? {
-
-            if (bundle == null) {
-                return null
-            }
-
-            return UserInfo(
-                url = bundle.getString("url")
-            )
-        }
     }
 }

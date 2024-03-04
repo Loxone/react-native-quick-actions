@@ -96,7 +96,9 @@ internal class AppShortcutsModule(reactContext: ReactApplicationContext) : React
                 .setAction(ACTION_SHORTCUT)
         }
 
-        intent.putExtra(SHORTCUT_ITEM, item)
+        // It is important to add the extra as PeristableBundle instead of Parcelable,
+        // because otherwise the ShortcutInfoManagerCompat throws an error when registering the shortcut.
+        intent.putExtra(SHORTCUT_ITEM, item.toPersistableBundle())
 
         return ShortcutInfoCompat.Builder(context, id)
             .setShortLabel(item.title)

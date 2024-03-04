@@ -1,6 +1,7 @@
 package com.reactNativeQuickActions
 
 import android.os.Parcelable
+import android.os.PersistableBundle
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
@@ -16,12 +17,24 @@ data class ShortcutItem(
 ) : Parcelable {
 
     fun toWritableMap(): WritableMap {
-        val map = Arguments.createMap()
-        map.putString("type", type)
-        map.putString("title", title)
-        map.putString("icon", icon)
-        map.putMap("userInfo", userInfo!!.toWritableMap())
+
+        val map = Arguments.createMap().apply {
+            putString("type", type)
+            putString("title", title)
+            putString("icon", icon)
+            putMap("userInfo", userInfo?.toWritableMap())
+        }
+
         return map
+    }
+
+    fun toPersistableBundle(): PersistableBundle {
+        return PersistableBundle().apply {
+            putString("type", type)
+            putString("title", title)
+            putString("icon", icon)
+            putPersistableBundle("userInfo", userInfo?.toPersistableBundle())
+        }
     }
 
     companion object {
