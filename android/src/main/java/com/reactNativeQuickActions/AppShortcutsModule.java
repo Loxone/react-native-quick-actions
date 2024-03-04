@@ -10,6 +10,8 @@ import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.PersistableBundle;
 
+import androidx.annotation.NonNull;
+
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException;
@@ -49,6 +51,7 @@ class AppShortcutsModule extends ReactContextBaseJavaModule {
         });
     }
 
+    @NonNull
     @Override
     public String getName() {
         return REACT_NAME;
@@ -93,20 +96,22 @@ class AppShortcutsModule extends ReactContextBaseJavaModule {
         }
 
         Context context = getReactApplicationContext();
+
+        List<ShortcutItem> shortcutItems = ShortcutItem.fromReadableArray(items);
         List<ShortcutInfo> shortcuts = new ArrayList<>(items.size());
 
         for (int i = 0; i < items.size(); i++) {
             ShortcutItem item = ShortcutItem.fromReadableMap(items.getMap(i));
 
             int iconResId = context.getResources()
-                    .getIdentifier(item.icon, "drawable", context.getPackageName());
+                    .getIdentifier(item.getIcon(), "drawable", context.getPackageName());
             Intent intent = new Intent(context, currentActivity.getClass());
             intent.setAction(ACTION_SHORTCUT);
             intent.putExtra(SHORTCUT_ITEM, item.toPersistableBundle());
 
             shortcuts.add(new ShortcutInfo.Builder(context, "id" + i)
-                    .setShortLabel(item.title)
-                    .setLongLabel(item.title)
+                    .setShortLabel(item.getTitle())
+                    .setLongLabel(item.getTitle())
                     .setIcon(Icon.createWithResource(context, iconResId))
                     .setIntent(intent)
                     .build());
