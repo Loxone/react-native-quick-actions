@@ -13,7 +13,8 @@ data class ShortcutItem(
     val type: String? = null,
     val title: String,
     val icon: String? = null,
-    val userInfo: UserInfo? = null
+    val userInfo: UserInfo? = null,
+    val androidInfo: AndroidInfo? = null
 ) : Parcelable {
 
     fun toWritableMap(): WritableMap {
@@ -55,11 +56,15 @@ data class ShortcutItem(
 
         @JvmStatic
         fun fromReadableMap(map: ReadableMap): ShortcutItem {
+            val userInfo = map.getMap("userInfo")
+            val androidInfo = map.getMap("androidInfo")
+
             return ShortcutItem(
                 type = map.getString("type"),
                 title = map.requireString("title"),
                 icon = map.getString("icon"),
-                userInfo = UserInfo.fromReadableMap(map.getMap("userInfo"))
+                userInfo = UserInfo.fromReadableMap(userInfo),
+                androidInfo = AndroidInfo.fromReadableMap(androidInfo)
             )
         }
 

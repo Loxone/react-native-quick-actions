@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.ShortcutManager
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.core.content.IntentCompat
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
@@ -89,8 +90,11 @@ internal class AppShortcutsModule(reactContext: ReactApplicationContext) : React
         val iconResId = context.resources.getIdentifier(item.icon, "drawable", context.packageName)
         val uri: Uri? = item.userInfo?.url?.toUri()
 
+        // Class that is supposed to receive the intent when clicking the shortcut
+        val targetClass: Class<*> = getClassOrDefault(item, default = activity.javaClass)
+
         val intent: Intent = if (uri != null) {
-            Intent(Intent.ACTION_VIEW, uri)
+            Intent(Intent.ACTION_VIEW, uri, context, targetClass)
         } else {
             Intent(context, activity.javaClass)
                 .setAction(ACTION_SHORTCUT)
@@ -106,6 +110,19 @@ internal class AppShortcutsModule(reactContext: ReactApplicationContext) : React
             .setIcon(IconCompat.createWithResource(context, iconResId))
             .setIntent(intent)
             .build()
+    }
+
+    private fun getClassOrDefault(item: ShortcutItem, default: Class<*>): Class<*> {
+
+        val className: String = item.androidInfo?.className ?: return default
+
+        try {
+            return Class.forName(className)
+        } catch (error: ClassNotFoundException) {
+            Log.w(LOG_TAG, "Could not resolve class for name '$className'. Using default: '$default'.")
+        }
+
+        return default
     }
 
     @ReactMethod
@@ -138,7 +155,9 @@ internal class AppShortcutsModule(reactContext: ReactApplicationContext) : React
     }
 
     companion object {
+
         const val REACT_NAME = "ReactAppShortcuts"
+        private const val LOG_TAG = REACT_NAME
         private const val ACTION_SHORTCUT = "ACTION_SHORTCUT"
         private const val SHORTCUT_ITEM = "SHORTCUT_ITEM"
     }

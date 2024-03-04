@@ -8,6 +8,9 @@ declare module 'react-native-quick-actions' {
     userInfo: {
       url: string
     }
+    androidInfo?: {
+      className?: string
+    }
   }
 
   export function popInitialAction(): Promise<ShortcutItem>;
