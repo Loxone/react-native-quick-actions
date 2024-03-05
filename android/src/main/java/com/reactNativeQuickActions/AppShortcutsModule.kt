@@ -98,7 +98,7 @@ internal class AppShortcutsModule(reactContext: ReactApplicationContext) : React
         val targetClass: Class<*> = getClassOrDefault(item, default = activity.javaClass)
 
         val intent: Intent = if (uri != null) {
-            Intent(Intent.ACTION_VIEW, uri)
+            Intent(Intent.ACTION_VIEW, uri, context, targetClass)
                 .setPackage(context.packageName)
         } else {
             Intent(context, targetClass)
