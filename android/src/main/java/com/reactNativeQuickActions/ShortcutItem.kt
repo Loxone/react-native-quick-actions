@@ -45,10 +45,11 @@ data class ShortcutItem(
             val shortcuts = mutableListOf<ShortcutItem>()
 
             for (index in 0 until items.size()) {
-                val map: ReadableMap = items.getMap(index)
-                val shortcut: ShortcutItem = fromReadableMap(map)
+                items.getMap(index)?.let { map ->
+                    val shortcut: ShortcutItem = fromReadableMap(map)
+                    shortcuts.add(shortcut)
+                }
 
-                shortcuts.add(shortcut)
             }
 
             return shortcuts
